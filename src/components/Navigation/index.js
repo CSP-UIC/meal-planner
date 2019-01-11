@@ -1,9 +1,11 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
+import { compose } from 'recompose';
+import PropTypes from 'prop-types';
 
 import * as ROUTES from '../../constants/routes';
+import { withUser } from '../Session';
 
-import PropTypes from 'prop-types';
 import { withStyles } from '@material-ui/core/styles';
 import AppBar from '@material-ui/core/AppBar';
 import Toolbar from '@material-ui/core/Toolbar';
@@ -11,7 +13,14 @@ import Typography from '@material-ui/core/Typography';
 import Button from '@material-ui/core/Button';
 import IconButton from '@material-ui/core/IconButton';
 import MenuIcon from '@material-ui/icons/Menu';
+import MenuItem from '@material-ui/icons/Menu';
+import Menu from '@material-ui/icons/Menu';
 import Hidden from '@material-ui/core/Hidden';
+import SignOutButton from '../SignOutButton';
+import AccountCircle from '@material-ui/icons/AccountCircle';
+
+import NavigationAuth from './withAuth';
+import NavigationNoAuth from './withoutAuth';
 
 const styles = {
   root: {
@@ -28,26 +37,28 @@ const styles = {
 
 class Navigation extends React.Component {
   render() {
-    const { classes } = this.props;
-    return (
-      <div className={classes.root}>
-        <AppBar position="static">
-          <Toolbar>
-            <Typography variant="h6" color="inherit" className={classes.grow}>
-              Meal It Up
-            </Typography>
+    const { classes, authUser } = this.props;
 
-            <Button component={Link} color="inherit" to={ROUTES.SIGN_IN}>
-              Login
+    return (
+      <AppBar position="static">
+        <Toolbar>
+          <Typography variant="h6" color="inherit" className={classes.grow}>
+            Meal It Up
+          </Typography>
+
+          {/* <Button component={Link} color="inherit" to={ROUTES.SIGN_IN}>
+            Login
+          </Button>
+
+          <Hidden xsDown>
+            <Button color="inherit" component={Link} to={ROUTES.SIGN_UP}>
+              Get Started
             </Button>
-            <Hidden xsDown>
-              <Button color="inherit" component={Link} to={ROUTES.SIGN_UP}>
-                Get Started
-              </Button>
-            </Hidden>
-          </Toolbar>
-        </AppBar>
-      </div>
+          </Hidden> */}
+
+          {authUser ? <NavigationAuth /> : <NavigationNoAuth />}
+        </Toolbar>
+      </AppBar>
     );
   }
 }
@@ -78,9 +89,13 @@ class Navigation extends React.Component {
 // );
 
 Navigation.propTypes = {
-  classes: PropTypes.object.isRequired
+  classes: PropTypes.object.isRequired,
+  authUser: PropTypes.object.isRequired
 };
 
-export default withStyles(styles)(Navigation);
+export default compose(
+  withStyles(styles),
+  withUser
+)(Navigation);
 
 // export default Navigation;
