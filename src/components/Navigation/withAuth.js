@@ -72,7 +72,10 @@ class NavigationAuth extends React.Component {
           }}
           open={open}
           onClose={this.handleClose}>
-          <MenuItem component={Link} to={ROUTES.ACCOUNT}>
+          <MenuItem
+            component={Link}
+            to={ROUTES.ACCOUNT}
+            onClick={this.handleClose}>
             <ListItemIcon>
               <Portrait />
             </ListItemIcon>

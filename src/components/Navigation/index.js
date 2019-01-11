@@ -1,8 +1,7 @@
 import React from 'react';
 import { compose } from 'recompose';
 import PropTypes from 'prop-types';
-
-import { withUser } from '../Session';
+import { Link, withRouter } from 'react-router-dom';
 
 import { withStyles } from '@material-ui/core/styles';
 import AppBar from '@material-ui/core/AppBar';
@@ -11,13 +10,16 @@ import Typography from '@material-ui/core/Typography';
 
 import NavigationAuth from './withAuth';
 import NavigationNoAuth from './withoutAuth';
+import * as ROUTES from '../../constants/routes';
+import { withUser } from '../Session';
 
 const styles = {
   root: {
     flexGrow: 1
   },
   grow: {
-    flexGrow: 1
+    flexGrow: 1,
+    textDecoration: 'none'
   },
   menuButton: {
     marginLeft: -12,
@@ -32,7 +34,12 @@ class Navigation extends React.Component {
     return (
       <AppBar position="static">
         <Toolbar>
-          <Typography variant="h6" color="inherit" className={classes.grow}>
+          <Typography
+            variant="h6"
+            color="inherit"
+            className={classes.grow}
+            component={Link}
+            to={ROUTES.LANDING}>
             Meal It Up
           </Typography>
 
@@ -85,7 +92,8 @@ Navigation.propTypes = {
 
 export default compose(
   withStyles(styles),
-  withUser
+  withUser,
+  withRouter
 )(Navigation);
 
 // export default Navigation;
