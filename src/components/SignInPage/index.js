@@ -1,5 +1,9 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import { withSnackbar } from 'notistack';
+import { Link, withRouter } from 'react-router-dom';
+import { compose } from 'recompose';
+
 import Avatar from '@material-ui/core/Avatar';
 import Button from '@material-ui/core/Button';
 import CssBaseline from '@material-ui/core/CssBaseline';
@@ -12,6 +16,9 @@ import LockIcon from '@material-ui/icons/LockOutlined';
 import Paper from '@material-ui/core/Paper';
 import Typography from '@material-ui/core/Typography';
 import withStyles from '@material-ui/core/styles/withStyles';
+
+import { withFirebase } from '../Firebase';
+import * as ROUTES from '../../constants/routes';
 
 const styles = theme => ({
   main: {
@@ -46,7 +53,40 @@ const styles = theme => ({
   }
 });
 
+const BasicState = {
+  email: '',
+  password: ''
+};
+
 class SignInPage extends React.Component {
+  constructor(props) {
+    super(props);
+
+    this.state = { ...BasicState };
+  }
+
+  handleChange = event => {
+    this.setState({
+      [event.target.name]: event.target.value
+    });
+  };
+
+  handleSubmit = event => {
+    event.preventDefault();
+
+    const { email, password } = this.state;
+
+    this.props.firebase
+      .doSignInWithEmailAndPassword(email, password)
+      .then(() => {
+        this.setState({ ...BasicState });
+        this.props.history.push(ROUTES.DASHBOARD);
+      })
+      .catch(error => {
+        this.setState({ error });
+      });
+  };
+
   render() {
     const { classes } = this.props;
 
@@ -58,10 +98,17 @@ class SignInPage extends React.Component {
         <Typography component="h1" variant="h5">
           Login
         </Typography>
-        <form className={classes.form}>
+        <form className={classes.form} onSubmit={this.handleSubmit}>
           <FormControl margin="normal" required fullWidth>
             <InputLabel htmlFor="email">Email Address</InputLabel>
-            <Input id="email" name="email" autoComplete="email" autoFocus />
+            <Input
+              id="email"
+              name="email"
+              autoComplete="email"
+              autoFocus
+              value={this.state.email}
+              onChange={this.handleChange}
+            />
           </FormControl>
           <FormControl margin="normal" required fullWidth>
             <InputLabel htmlFor="password">Password</InputLabel>
@@ -69,6 +116,8 @@ class SignInPage extends React.Component {
               name="password"
               type="password"
               id="password"
+              value={this.state.password}
+              onChange={this.handleChange}
               autoComplete="current-password"
             />
           </FormControl>
@@ -88,7 +137,21 @@ class SignInPage extends React.Component {
 }
 
 SignInPage.propTypes = {
-  classes: PropTypes.object.isRequired
+  classes: PropTypes.object.isRequired,
+  enqueueSnackbar: PropTypes.func.isRequired
 };
 
-export default withStyles(styles)(SignInPage);
+const SignInLink = () => (
+  <p>
+    Already have an account? <Link to={ROUTES.SIGN_IN}>Sign In</Link>
+  </p>
+);
+
+export { SignInLink };
+
+export default compose(
+  withRouter,
+  withSnackbar,
+  withStyles(styles),
+  withFirebase
+)(SignInPage);

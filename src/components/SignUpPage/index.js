@@ -1,5 +1,9 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import { withSnackbar } from 'notistack';
+import { Link, withRouter } from 'react-router-dom';
+import { compose } from 'recompose';
+
 import Avatar from '@material-ui/core/Avatar';
 import Button from '@material-ui/core/Button';
 import CssBaseline from '@material-ui/core/CssBaseline';
@@ -12,7 +16,6 @@ import LockIcon from '@material-ui/icons/LockOutlined';
 import Paper from '@material-ui/core/Paper';
 import Typography from '@material-ui/core/Typography';
 import withStyles from '@material-ui/core/styles/withStyles';
-import { withSnackbar } from 'notistack';
 
 import { withFirebase } from '../Firebase';
 import * as ROUTES from '../../constants/routes';
@@ -58,7 +61,7 @@ const BasicState = {
   error: ''
 };
 
-class SignUpFormBase extends React.Component {
+class SignUpPage extends React.Component {
   constructor(props) {
     super(props);
 
@@ -74,7 +77,19 @@ class SignUpFormBase extends React.Component {
   handleSubmit = event => {
     event.preventDefault();
 
-    const { name, email, password } = this.state;
+    const { name, email, password, cp_password } = this.state;
+
+    const passwordMatch = cp_password === password;
+    // const emailValid = /^\w+([\.-]?\w+)*\w@+([\.-]?\w+)*(\.\w{2,3})+$/.test(
+    //   email
+    // );
+
+    if (!passwordMatch) {
+      this.props.enqueueSnackbar('Passwords do not match', {
+        variant: 'warning'
+      });
+      return;
+    }
 
     this.props.firebase
       .doCreateUserWithEmailAndPassword(email, password)
@@ -91,7 +106,7 @@ class SignUpFormBase extends React.Component {
       })
       .catch(error => {
         this.setState({ error });
-        this.props.enqueueSnackbar(error.message);
+        this.props.enqueueSnackbar(error.message, { variant: 'warning' });
       });
 
     event.preventDefault();
@@ -99,14 +114,6 @@ class SignUpFormBase extends React.Component {
 
   render() {
     const { classes } = this.props;
-
-    const passwordMatch = this.state.cp_password == this.state.password;
-    const fullNameExists = this.state.name != '';
-    const emailValid = /^\w+([\.-]?\w+)*\w@+([\.-]?\w+)*(\.\w{2,3})+$/.test(
-      this.state.email
-    );
-
-    const isFormValid = passwordMatch && emailValid && fullNameExists;
 
     return (
       <main className={classes.main}>
@@ -147,6 +154,7 @@ class SignUpFormBase extends React.Component {
               id="password"
               value={this.state.password}
               onChange={this.handleChange}
+              autoComplete="current-password"
             />
           </FormControl>
 
@@ -166,9 +174,7 @@ class SignUpFormBase extends React.Component {
             fullWidth
             variant="contained"
             color="primary"
-            className={classes.submit}
-            // disabled={!isFormValid}
-          >
+            className={classes.submit}>
             Register
           </Button>
         </form>
@@ -178,18 +184,25 @@ class SignUpFormBase extends React.Component {
   }
 }
 
-SignUpFormBase.propTypes = {
+SignUpPage.propTypes = {
   classes: PropTypes.object.isRequired,
   enqueueSnackbar: PropTypes.func.isRequired
 };
 
-const SignUpForm = withSnackbar(
-  withFirebase(withStyles(styles)(SignUpFormBase))
+const SignUpLink = () => (
+  <p>
+    Don't have an account? <Link to={ROUTES.SIGN_UP}>Sign Up</Link>
+  </p>
 );
 
-const SignUpPage = () => <SignUpForm />;
+export { SignUpLink };
 
-export default withStyles(styles)(SignUpPage);
+export default compose(
+  withRouter,
+  withSnackbar,
+  withStyles(styles),
+  withFirebase
+)(SignUpPage);
 
 // import React from 'react';
 // import PropTypes from 'prop-types';
@@ -286,12 +299,6 @@ export default withStyles(styles)(SignUpPage);
 //     );
 //   }
 // }
-
-// const SignUpLink = () => (
-//   <p>
-//     Don't have an account? <Link to={ROUTES.SIGN_UP}>Sign Up</Link>
-//   </p>
-// );
 
 // SignUpForm.propTypes = {
 //   classes: PropTypes.object.isRequired
