@@ -1,7 +1,7 @@
 import React from 'react';
-import { compose } from 'recompose';
 import { Link } from 'react-router-dom';
-import PropTypes from 'prop-types';
+
+import Button from '@material-ui/core/Button';
 
 import * as ROUTES from '../../constants/routes';
 
@@ -9,9 +9,11 @@ import * as ROUTES from '../../constants/routes';
 class NavigationNoAuth extends React.Component {
   render() {
     return (
-      <div>
-        No Auth <br />
-      </div>
+      <React.Fragment>
+        <Button color="inherit" component={Link} to={ROUTES.SIGN_IN}>
+          Login
+        </Button>
+      </React.Fragment>
     );
   }
 }

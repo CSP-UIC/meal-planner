@@ -1,6 +1,6 @@
 import React from 'react';
 import { compose } from 'recompose';
-import { Link, withRouter } from 'react-router-dom';
+import { withRouter } from 'react-router-dom';
 import { withSnackbar } from 'notistack';
 
 import Button from '@material-ui/core/Button';

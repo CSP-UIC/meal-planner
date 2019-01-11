@@ -2,7 +2,6 @@ import React from 'react';
 import { compose } from 'recompose';
 import { BrowserRouter as Router, Route } from 'react-router-dom';
 import { MuiThemeProvider } from '@material-ui/core/styles';
-import { FirebaseContext } from '../Firebase';
 import { SnackbarProvider } from 'notistack';
 
 import Navigation from '../Navigation';

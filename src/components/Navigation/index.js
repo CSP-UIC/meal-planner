@@ -1,23 +1,13 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
 import { compose } from 'recompose';
 import PropTypes from 'prop-types';
 
-import * as ROUTES from '../../constants/routes';
 import { withUser } from '../Session';
 
 import { withStyles } from '@material-ui/core/styles';
 import AppBar from '@material-ui/core/AppBar';
 import Toolbar from '@material-ui/core/Toolbar';
 import Typography from '@material-ui/core/Typography';
-import Button from '@material-ui/core/Button';
-import IconButton from '@material-ui/core/IconButton';
-import MenuIcon from '@material-ui/icons/Menu';
-import MenuItem from '@material-ui/icons/Menu';
-import Menu from '@material-ui/icons/Menu';
-import Hidden from '@material-ui/core/Hidden';
-import SignOutButton from '../SignOutButton';
-import AccountCircle from '@material-ui/icons/AccountCircle';
 
 import NavigationAuth from './withAuth';
 import NavigationNoAuth from './withoutAuth';
