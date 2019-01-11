@@ -13,10 +13,13 @@ import AccountPage from '../AccountPage';
 import * as ROUTES from '../../constants/routes';
 import csp_theme from './theme.js';
 
+import { FirebaseContext } from '../Firebase';
+import { SnackbarProvider } from 'notistack';
+
 const App = () => (
   <MuiThemeProvider theme={csp_theme}>
     <Router>
-      <div>
+      <SnackbarProvider maxSnack={3}>
         <Navigation />
 
         <Route exact path={ROUTES.LANDING} component={LandingPage} />
@@ -25,7 +28,7 @@ const App = () => (
         <Route path={ROUTES.PASSWORD_FORGET} component={PasswordForgetPage} />
         <Route path={ROUTES.DASHBOARD} component={DashboardPage} />
         <Route path={ROUTES.ACCOUNT} component={AccountPage} />
-      </div>
+      </SnackbarProvider>
     </Router>
   </MuiThemeProvider>
 );

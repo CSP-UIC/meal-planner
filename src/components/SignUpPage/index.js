@@ -12,6 +12,10 @@ import LockIcon from '@material-ui/icons/LockOutlined';
 import Paper from '@material-ui/core/Paper';
 import Typography from '@material-ui/core/Typography';
 import withStyles from '@material-ui/core/styles/withStyles';
+import { withSnackbar } from 'notistack';
+
+import { withFirebase } from '../Firebase';
+import * as ROUTES from '../../constants/routes';
 
 const styles = theme => ({
   main: {
@@ -54,7 +58,7 @@ const BasicState = {
   error: ''
 };
 
-class SignUpPage extends React.Component {
+class SignUpFormBase extends React.Component {
   constructor(props) {
     super(props);
 
@@ -67,14 +71,38 @@ class SignUpPage extends React.Component {
     });
   };
 
-  handleSubmit = () => {};
+  handleSubmit = event => {
+    event.preventDefault();
+
+    const { name, email, password } = this.state;
+
+    this.props.firebase
+      .doCreateUserWithEmailAndPassword(email, password)
+      .then(authUser => {
+        // Create a user in your Firebase realtime database
+        return this.props.firebase.user(authUser.user.uid).set({
+          name,
+          email
+        });
+      })
+      .then(authUser => {
+        this.setState({ ...BasicState });
+        this.props.history.push(ROUTES.DASHBOARD);
+      })
+      .catch(error => {
+        this.setState({ error });
+        this.props.enqueueSnackbar(error.message);
+      });
+
+    event.preventDefault();
+  };
 
   render() {
     const { classes } = this.props;
 
     const passwordMatch = this.state.cp_password == this.state.password;
     const fullNameExists = this.state.name != '';
-    const emailValid = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(
+    const emailValid = /^\w+([\.-]?\w+)*\w@+([\.-]?\w+)*(\.\w{2,3})+$/.test(
       this.state.email
     );
 
@@ -88,7 +116,7 @@ class SignUpPage extends React.Component {
         <Typography component="h1" variant="h5">
           Register
         </Typography>
-        <form className={classes.form}>
+        <form className={classes.form} onSubmit={this.handleSubmit}>
           <FormControl margin="normal" required fullWidth>
             <InputLabel htmlFor="name">Full Name</InputLabel>
             <Input
@@ -139,7 +167,8 @@ class SignUpPage extends React.Component {
             variant="contained"
             color="primary"
             className={classes.submit}
-            disabled={!isFormValid}>
+            // disabled={!isFormValid}
+          >
             Register
           </Button>
         </form>
@@ -149,9 +178,16 @@ class SignUpPage extends React.Component {
   }
 }
 
-SignUpPage.propTypes = {
-  classes: PropTypes.object.isRequired
+SignUpFormBase.propTypes = {
+  classes: PropTypes.object.isRequired,
+  enqueueSnackbar: PropTypes.func.isRequired
 };
+
+const SignUpForm = withSnackbar(
+  withFirebase(withStyles(styles)(SignUpFormBase))
+);
+
+const SignUpPage = () => <SignUpForm />;
 
 export default withStyles(styles)(SignUpPage);
 
