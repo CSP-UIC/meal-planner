@@ -1,9 +1,24 @@
 import React from 'react';
+import { compose } from 'recompose';
 
-const AccountPage = () => (
-  <div>
-    <h1>AccountPage</h1>
-  </div>
-);
+import { withStyles } from '@material-ui/core/styles';
 
-export default AccountPage;
+import Profile from './profile';
+import PasswordChange from './passwordChange';
+
+const styles = theme => ({});
+
+class AccountPage extends React.Component {
+  render() {
+    const { classes } = this.props;
+
+    return (
+      <React.Fragment>
+        <Profile />
+        <PasswordChange />
+      </React.Fragment>
+    );
+  }
+}
+
+export default compose(withStyles(styles))(AccountPage);

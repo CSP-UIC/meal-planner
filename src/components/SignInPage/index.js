@@ -13,7 +13,13 @@ import Typography from '@material-ui/core/Typography';
 import withStyles from '@material-ui/core/styles/withStyles';
 
 import { withFirebase } from '../Firebase';
+import { withUser } from '../Session';
 import * as ROUTES from '../../constants/routes';
+import { SignUpLink } from '../SignUpPage';
+
+function sleep(time) {
+  return new Promise(resolve => setTimeout(resolve, time));
+}
 
 const styles = theme => ({
   main: {
@@ -73,12 +79,20 @@ class SignInPage extends React.Component {
 
     this.props.firebase
       .doSignInWithEmailAndPassword(email, password)
-      .then(() => {
+      .then(async () => {
         this.setState({ ...BasicState });
         this.props.history.push(ROUTES.DASHBOARD);
+
+        const uid = this.props.firebase.auth.currentUser.uid;
+        const name = this.props.firebase.username(uid);
+        this.props.enqueueSnackbar(
+          'Welcome back ' + name
+          //     this.props.firebase.user(this.props.authUser.uid).name
+        );
       })
       .catch(error => {
         this.setState({ error });
+        this.props.enqueueSnackbar(error.message, { variant: 'warning' });
       });
   };
 
@@ -116,6 +130,7 @@ class SignInPage extends React.Component {
               autoComplete="current-password"
             />
           </FormControl>
+
           <Button
             type="submit"
             fullWidth
@@ -124,6 +139,8 @@ class SignInPage extends React.Component {
             className={classes.submit}>
             Sign in
           </Button>
+
+          <SignUpLink />
         </form>
         {/* </Paper> */}
       </main>
@@ -138,7 +155,7 @@ SignInPage.propTypes = {
 
 const SignInLink = () => (
   <p>
-    Already have an account? <Link to={ROUTES.SIGN_IN}>Sign In</Link>
+    Already have an account? <Link to={ROUTES.SIGN_IN}>Sign in</Link> here
   </p>
 );
 
@@ -148,5 +165,6 @@ export default compose(
   withRouter,
   withSnackbar,
   withStyles(styles),
-  withFirebase
+  withFirebase,
+  withUser
 )(SignInPage);

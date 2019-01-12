@@ -17,9 +17,9 @@ import csp_theme from './theme.js';
 import { withAuthentication } from '../Session';
 
 const App = () => (
-  <MuiThemeProvider theme={csp_theme}>
+  <SnackbarProvider maxSnack={3}>
     <Router>
-      <SnackbarProvider maxSnack={3}>
+      <MuiThemeProvider theme={csp_theme}>
         <Navigation />
 
         <Route exact path={ROUTES.LANDING} component={LandingPage} />
@@ -28,9 +28,9 @@ const App = () => (
         <Route path={ROUTES.PASSWORD_FORGET} component={PasswordForgetPage} />
         <Route path={ROUTES.DASHBOARD} component={DashboardPage} />
         <Route path={ROUTES.ACCOUNT} component={AccountPage} />
-      </SnackbarProvider>
+      </MuiThemeProvider>
     </Router>
-  </MuiThemeProvider>
+  </SnackbarProvider>
 );
 
 export default compose(withAuthentication)(App);

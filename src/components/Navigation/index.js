@@ -86,8 +86,7 @@ class Navigation extends React.Component {
 // );
 
 Navigation.propTypes = {
-  classes: PropTypes.object.isRequired,
-  authUser: PropTypes.object.isRequired
+  classes: PropTypes.object.isRequired
 };
 
 export default compose(

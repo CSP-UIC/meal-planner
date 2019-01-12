@@ -13,6 +13,8 @@ import Typography from '@material-ui/core/Typography';
 import withStyles from '@material-ui/core/styles/withStyles';
 
 import { withFirebase } from '../Firebase';
+import { SignInLink } from '../SignInPage';
+
 import * as ROUTES from '../../constants/routes';
 
 const styles = theme => ({
@@ -49,7 +51,8 @@ const styles = theme => ({
 });
 
 const BasicState = {
-  name: '',
+  f_name: '',
+  l_name: '',
   email: '',
   password: '',
   cp_password: '',
@@ -72,7 +75,7 @@ class SignUpPage extends React.Component {
   handleSubmit = event => {
     event.preventDefault();
 
-    const { name, email, password, cp_password } = this.state;
+    const { f_name, email, password, cp_password, l_name } = this.state;
 
     const passwordMatch = cp_password === password;
     // const emailValid = /^\w+([\.-]?\w+)*\w@+([\.-]?\w+)*(\.\w{2,3})+$/.test(
@@ -91,7 +94,8 @@ class SignUpPage extends React.Component {
       .then(authUser => {
         // Create a user in your Firebase realtime database
         return this.props.firebase.user(authUser.user.uid).set({
-          name,
+          f_name,
+          l_name,
           email
         });
       })
@@ -120,11 +124,22 @@ class SignUpPage extends React.Component {
         </Typography>
         <form className={classes.form} onSubmit={this.handleSubmit}>
           <FormControl margin="normal" required fullWidth>
-            <InputLabel htmlFor="name">Full Name</InputLabel>
+            <InputLabel htmlFor="f_name">First Name</InputLabel>
             <Input
-              id="name"
-              name="name"
-              value={this.state.name}
+              id="f_name"
+              name="f_name"
+              value={this.state.f_name}
+              onChange={this.handleChange}
+              autoFocus
+            />
+          </FormControl>
+
+          <FormControl margin="normal" required fullWidth>
+            <InputLabel htmlFor="l_name">Last Name</InputLabel>
+            <Input
+              id="l_name"
+              name="l_name"
+              value={this.state.l_name}
               onChange={this.handleChange}
               autoFocus
             />
@@ -172,6 +187,8 @@ class SignUpPage extends React.Component {
             className={classes.submit}>
             Register
           </Button>
+
+          <SignInLink />
         </form>
         {/* </Paper> */}
       </main>
@@ -186,7 +203,7 @@ SignUpPage.propTypes = {
 
 const SignUpLink = () => (
   <p>
-    Don't have an account? <Link to={ROUTES.SIGN_UP}>Sign Up</Link>
+    Don't have an account? <Link to={ROUTES.SIGN_UP}>Sign up</Link> here
   </p>
 );
 
