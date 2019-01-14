@@ -33,20 +33,20 @@ class Profile extends React.Component {
   }
 
   componentDidMount() {
-    this.props.firebase
-      .user(this.props.authUser.uid)
-      .once('value', snapshot => {
-        const user = snapshot.val();
+    this.props.firebase.user(this.props.authUser.uid).on('value', snapshot => {
+      const user = snapshot.val();
 
-        console.log(user);
-
-        this.setState({
-          f_name: user.f_name,
-          l_name: user.l_name,
-          email: user.email,
-          loading: false
-        });
+      this.setState({
+        f_name: user.f_name,
+        l_name: user.l_name,
+        email: user.email,
+        loading: false
       });
+    });
+  }
+
+  componentWillUnmount() {
+    this.props.firebase.user(this.props.authUser.uid).off();
   }
 
   handleOpen = () => {
