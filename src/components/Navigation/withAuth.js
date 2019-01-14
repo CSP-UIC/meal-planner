@@ -14,7 +14,7 @@ import { PowerSettingsNew, Portrait } from '@material-ui/icons';
 
 import * as ROUTES from '../../constants/routes';
 import { withFirebase } from '../Firebase';
-import { withAuthentication } from '../Session';
+import { withUser } from '../Session';
 
 // Includes Profile (SignOut and Acoount) and Dashboard
 class NavigationAuth extends React.Component {
@@ -22,8 +22,18 @@ class NavigationAuth extends React.Component {
     super(props);
 
     this.state = {
-      anchorEl: null
+      anchorEl: null,
+      f_name: '',
+      l_name: ''
     };
+  }
+  componentDidMount() {
+    this.props.firebase.user(this.props.authUser.uid).on('value', snapshot => {
+      this.setState({
+        f_name: snapshot.val().f_name,
+        l_name: snapshot.val().l_name
+      });
+    });
   }
 
   handleMenu = event => {
@@ -72,6 +82,16 @@ class NavigationAuth extends React.Component {
           }}
           open={open}
           onClose={this.handleClose}>
+          <MenuItem divider={true} disabled>
+            {/* <ListItemIcon>
+              <Portrait />
+            </ListItemIcon>
+            <ListItemText
+              inset
+              primary={this.state.f_name + ' ' + this.state.l_name}
+            /> */}
+            {this.state.f_name + ' ' + this.state.l_name}
+          </MenuItem>
           <MenuItem
             component={Link}
             to={ROUTES.ACCOUNT}
@@ -94,7 +114,7 @@ class NavigationAuth extends React.Component {
 }
 
 export default compose(
-  withAuthentication,
+  withUser,
   withFirebase,
   withRouter,
   withSnackbar

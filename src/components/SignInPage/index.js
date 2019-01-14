@@ -16,6 +16,7 @@ import { withFirebase } from '../Firebase';
 import { withUser } from '../Session';
 import * as ROUTES from '../../constants/routes';
 import { SignUpLink } from '../SignUpPage';
+import { PasswordForgetLink } from '../PasswordForgetPage';
 
 function sleep(time) {
   return new Promise(resolve => setTimeout(resolve, time));
@@ -141,6 +142,7 @@ class SignInPage extends React.Component {
           </Button>
 
           <SignUpLink />
+          <PasswordForgetLink />
         </form>
         {/* </Paper> */}
       </main>

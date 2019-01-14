@@ -2,15 +2,28 @@ import React from 'react';
 import { compose } from 'recompose';
 import { withSnackbar } from 'notistack';
 
+import Typography from '@material-ui/core/Typography';
+import Modal from '@material-ui/core/Modal';
+import Button from '@material-ui/core/Button';
+import { withStyles } from '@material-ui/core/styles';
+
 import { withFirebase } from '../Firebase';
-import { withUser } from '../Session';
+import { withAuthorization } from '../Session';
+import { Paper } from '@material-ui/core';
 
 const BasicState = {
   f_name: '',
   l_name: '',
   email: '',
-  editing: false
+  open: false
 };
+
+const styles = theme => ({
+  main: {
+    marginTop: theme.spacing.unit * 4,
+    textAlign: 'center'
+  }
+});
 
 class Profile extends React.Component {
   constructor(props) {
@@ -19,37 +32,70 @@ class Profile extends React.Component {
     this.state = { ...BasicState };
   }
 
+  componentDidMount() {
+    this.props.firebase
+      .user(this.props.authUser.uid)
+      .once('value', snapshot => {
+        const user = snapshot.val();
+
+        console.log(user);
+
+        this.setState({
+          f_name: user.f_name,
+          l_name: user.l_name,
+          email: user.email,
+          loading: false
+        });
+      });
+  }
+
+  handleOpen = () => {
+    this.setState({
+      open: true
+    });
+  };
+
+  handleClose = () => {
+    this.setState({
+      open: false
+    });
+  };
+
   render() {
-    const { firebase, authUser } = this.props;
-    const { f_name, l_name, email, editing } = this.state;
+    const { f_name, l_name, email } = this.state;
 
     return (
-      <div>
-        {authUser &&
-          firebase.user(authUser.uid).on('value', snapshot => {
-            const user = snapshot.val();
+      <div className={this.props.classes.main}>
+        <Typography variant="h3">{f_name + ' ' + l_name}</Typography>
 
-            if (
-              user.f_name !== f_name ||
-              user.email !== email ||
-              user.l_name !== l_name
-            )
-              this.setState({
-                f_name: user.f_name,
-                l_name: user.l_name,
-                email: user.email
-              });
-          })}
+        <Typography variant="h6" gutterBottom>
+          {email}
+        </Typography>
 
-        {f_name + ' ' + l_name}
-        <br />
-        {email}
+        {/* <Button onClick={this.handleOpen}>Open Modal</Button>
+        <Modal
+          aria-labelledby="simple-modal-title"
+          aria-describedby="simple-modal-description"
+          open={this.state.open}
+          onClose={this.handleClose}>
+          <Paper className={this.props.classes.main}>
+            <Typography variant="h6" id="modal-title">
+              Text in a modal
+            </Typography>
+            <Typography variant="subtitle1" id="simple-modal-description">
+              Duis mollis, est non commodo luctus, nisi erat porttitor ligula.
+            </Typography>
+          </Paper>
+        </Modal> */}
       </div>
     );
   }
 }
+
+const condition = authUser => !!authUser;
 export default compose(
   withFirebase,
-  withUser,
-  withSnackbar
+  withAuthorization(condition),
+  withSnackbar,
+  withStyles(styles)
 )(Profile);

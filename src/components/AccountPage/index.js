@@ -2,23 +2,28 @@ import React from 'react';
 import { compose } from 'recompose';
 
 import { withStyles } from '@material-ui/core/styles';
+import Divider from '@material-ui/core/Divider';
 
 import Profile from './profile';
 import PasswordChange from './passwordChange';
+import { withAuthorization } from '../Session';
 
 const styles = theme => ({});
 
 class AccountPage extends React.Component {
   render() {
-    const { classes } = this.props;
-
     return (
       <React.Fragment>
         <Profile />
+        <Divider />
         <PasswordChange />
       </React.Fragment>
     );
   }
 }
 
-export default compose(withStyles(styles))(AccountPage);
+const condition = authUser => !!authUser;
+export default compose(
+  withAuthorization(condition),
+  withStyles(styles)
+)(AccountPage);
