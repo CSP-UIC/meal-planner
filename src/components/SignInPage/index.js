@@ -13,14 +13,10 @@ import Typography from '@material-ui/core/Typography';
 import withStyles from '@material-ui/core/styles/withStyles';
 
 import { withFirebase } from '../Firebase';
-import { withUser } from '../Session';
+import { withAuthorization } from '../Session';
 import * as ROUTES from '../../constants/routes';
 import { SignUpLink } from '../SignUpPage';
 import { PasswordForgetLink } from '../PasswordForgetPage';
-
-function sleep(time) {
-  return new Promise(resolve => setTimeout(resolve, time));
-}
 
 const styles = theme => ({
   main: {
@@ -163,10 +159,12 @@ const SignInLink = () => (
 
 export { SignInLink };
 
+const condition = authUser => authUser === null;
+
 export default compose(
   withRouter,
   withSnackbar,
   withStyles(styles),
   withFirebase,
-  withUser
+  withAuthorization(condition)
 )(SignInPage);

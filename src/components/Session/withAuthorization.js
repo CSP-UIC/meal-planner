@@ -12,10 +12,17 @@ const withAuthorization = condition => Component => {
     componentDidMount() {
       this.listener = this.props.firebase.auth.onAuthStateChanged(authUser => {
         if (!condition(authUser)) {
-          this.props.enqueueSnackbar('Login required to access page', {
-            variant: 'warning'
-          });
-          this.props.history.push(ROUTES.SIGN_IN);
+          if (!!!authUser) {
+            this.props.enqueueSnackbar('Login required to access page', {
+              variant: 'warning'
+            });
+            this.props.history.push(ROUTES.SIGN_IN);
+          } else {
+            this.props.enqueueSnackbar('Already logged in', {
+              variant: 'info'
+            });
+            this.props.history.push(ROUTES.DASHBOARD);
+          }
         }
       });
     }

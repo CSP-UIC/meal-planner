@@ -14,7 +14,7 @@ import { PowerSettingsNew, Portrait } from '@material-ui/icons';
 
 import * as ROUTES from '../../constants/routes';
 import { withFirebase } from '../Firebase';
-import { withUser } from '../Session';
+import { withAuthorization } from '../Session';
 
 // Includes Profile (SignOut and Acoount) and Dashboard
 class NavigationAuth extends React.Component {
@@ -34,6 +34,10 @@ class NavigationAuth extends React.Component {
         l_name: snapshot.val().l_name
       });
     });
+  }
+
+  componentWillUnmount() {
+    this.props.firebase.user(this.props.authUser.uid).off();
   }
 
   handleMenu = event => {
@@ -113,8 +117,10 @@ class NavigationAuth extends React.Component {
   }
 }
 
+const condition = authUser => !!authUser;
+
 export default compose(
-  withUser,
+  withAuthorization(condition),
   withFirebase,
   withRouter,
   withSnackbar
