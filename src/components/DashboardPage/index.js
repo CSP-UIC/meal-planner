@@ -25,7 +25,7 @@ import Grid from '@material-ui/core/Grid';
 import { withAuthorization } from '../Session';
 import { withFirebase } from '../Firebase';
 import DayCard from './dayCard';
-import { Divider } from '@material-ui/core';
+import { Divider, Typography } from '@material-ui/core';
 
 const moment = require('moment');
 const _ = require('lodash');
@@ -34,9 +34,19 @@ const styles = theme => ({
   card: {
     maxWidth: 345
   },
-
   media: {
     height: 140
+  },
+  main: {
+    width: 'auto',
+    display: 'block', // Fix IE 11 issue.
+    marginTop: theme.spacing.unit * 4,
+    marginLeft: theme.spacing.unit * 4,
+    marginRight: theme.spacing.unit * 4
+  },
+  divider: {
+    marginTop: theme.spacing.unit * 2,
+    marginBottom: theme.spacing.unit * 2
   }
 });
 
@@ -47,6 +57,7 @@ class DashboardPage extends React.Component {
     super(props);
 
     this.state = {
+      name: '',
       meals: {}
     };
   }
@@ -107,7 +118,8 @@ class DashboardPage extends React.Component {
       }
 
       this.setState({
-        meals
+        meals,
+        name: snapshot.val().f_name + ' ' + snapshot.val().l_name
       });
     });
   }
@@ -117,13 +129,15 @@ class DashboardPage extends React.Component {
   }
 
   render() {
-    // const { classes } = this.props;
-    const { meals } = this.state;
+    const { classes } = this.props;
+    const { meals, name } = this.state;
 
     return (
-      <React.Fragment>
-        WIP
-        <Divider />
+      <main className={classes.main}>
+        <Typography variant="h4">{name}</Typography>
+
+        <Divider className={classes.divider} />
+
         <Grid
           container
           direction="row"
@@ -134,7 +148,7 @@ class DashboardPage extends React.Component {
             <DayCard date={key} info={meals[key]} key={key} />
           ))}
         </Grid>
-      </React.Fragment>
+      </main>
     );
   }
 }
