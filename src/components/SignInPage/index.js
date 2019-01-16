@@ -80,12 +80,10 @@ class SignInPage extends React.Component {
         this.setState({ ...BasicState });
         this.props.history.push(ROUTES.DASHBOARD);
 
-        const uid = this.props.firebase.auth.currentUser.uid;
-        const name = this.props.firebase.username(uid);
-        this.props.enqueueSnackbar(
-          'Welcome back ' + name
-          //     this.props.firebase.user(this.props.authUser.uid).name
-        );
+        const uid = await this.props.firebase.auth.currentUser.uid;
+        this.props.firebase.user(uid).once('value', snapshot => {
+          this.props.enqueueSnackbar('Welcome back, ' + snapshot.val().f_name);
+        });
       })
       .catch(error => {
         this.setState({ error });

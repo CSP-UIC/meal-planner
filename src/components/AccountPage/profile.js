@@ -3,13 +3,10 @@ import { compose } from 'recompose';
 import { withSnackbar } from 'notistack';
 
 import Typography from '@material-ui/core/Typography';
-import Modal from '@material-ui/core/Modal';
-import Button from '@material-ui/core/Button';
 import { withStyles } from '@material-ui/core/styles';
 
 import { withFirebase } from '../Firebase';
 import { withAuthorization } from '../Session';
-import { Paper } from '@material-ui/core';
 
 const BasicState = {
   f_name: '',

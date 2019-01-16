@@ -11,7 +11,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { compose } from 'recompose';
-import ReactJson from 'react-json-view';
 
 import { withStyles } from '@material-ui/core/styles';
 import Grid from '@material-ui/core/Grid';
@@ -25,6 +24,8 @@ import Grid from '@material-ui/core/Grid';
 
 import { withAuthorization } from '../Session';
 import { withFirebase } from '../Firebase';
+import DayCard from './dayCard';
+import { Divider } from '@material-ui/core';
 
 const moment = require('moment');
 const _ = require('lodash');
@@ -39,7 +40,7 @@ const styles = theme => ({
   }
 });
 
-const format = 'MMDDYYYY';
+const format = 'YYYYMMDD';
 
 class DashboardPage extends React.Component {
   constructor(props) {
@@ -58,8 +59,28 @@ class DashboardPage extends React.Component {
         .add(1, 'day')
         .format(format);
 
-      if (moment().day() === 0 && !meals[tomFormat]) {
+      if (moment().day() === 0 && !_.has(meals, tomFormat)) {
         meals = _.pick(meals, [moment().format(format)]);
+
+        [1, 2, 3, 4, 5, 6, 7].forEach(numDays => {
+          _.assign(meals, {
+            [moment()
+              .add(numDays, 'days')
+              .format(format)]: {
+              empty: true,
+              breakfast: null,
+              lunch: null,
+              dinner: null
+            }
+          });
+        });
+
+        this.props.firebase.user(this.props.authUser.uid).set({
+          f_name: snapshot.val().f_name,
+          l_name: snapshot.val().l_name,
+          email: snapshot.val().email,
+          meals: meals
+        });
       } else if (!_.has(meals, moment().format(format))) {
         meals = {};
 
@@ -68,7 +89,7 @@ class DashboardPage extends React.Component {
             [moment()
               .startOf('week')
               .add(numDays, 'days')
-              .format('MMDDYYYY')]: {
+              .format(format)]: {
               empty: true,
               breakfast: null,
               lunch: null,
@@ -96,44 +117,24 @@ class DashboardPage extends React.Component {
   }
 
   render() {
-    const { classes } = this.props;
+    // const { classes } = this.props;
+    const { meals } = this.state;
 
     return (
-      <center>
+      <React.Fragment>
         WIP
-        <br />
+        <Divider />
         <Grid
           container
           direction="row"
           justify="space-around"
           alignItems="center"
           spacing={24}>
-          <Grid item xs={3}>
-            H
-          </Grid>
-          <Grid item xs={3}>
-            H
-          </Grid>
-          <Grid item xs={3}>
-            H
-          </Grid>
-          <Grid item xs={3}>
-            H
-          </Grid>
-          <Grid item xs={3}>
-            H
-          </Grid>
-          <Grid item xs={3}>
-            H
-          </Grid>
-          <Grid item xs={3}>
-            H
-          </Grid>
-          <Grid item xs={3}>
-            H
-          </Grid>
+          {Object.keys(meals).map((key, index) => (
+            <DayCard date={key} info={meals[key]} key={key} />
+          ))}
         </Grid>
-      </center>
+      </React.Fragment>
     );
   }
 }
