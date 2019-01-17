@@ -6,8 +6,8 @@ import Paper from '@material-ui/core/Paper';
 import Typography from '@material-ui/core/Typography';
 import Button from '@material-ui/core/Button';
 import Dialog from '@material-ui/core/Dialog';
-import IconButton from '@material-ui/core/IconButton';
-import DeleteIcon from '@material-ui/icons/Delete';
+import Fab from '@material-ui/core/Fab';
+import CloseIcon from '@material-ui/icons/CloseRounded';
 import { withStyles } from '@material-ui/core/styles';
 
 const moment = require('moment');
@@ -20,6 +20,12 @@ const styles = theme => ({
   },
   button: {
     marginRight: theme.spacing.unit
+  },
+  closeButton: {
+    position: 'absolute',
+    bottom: theme.spacing.unit,
+    right: theme.spacing.unit,
+    padding: 0
   }
 });
 
@@ -63,8 +69,8 @@ class DayCard extends React.Component {
             onClick={this.handleOpen}>
             <b>Edit</b>
           </Button>
-          <Button color="secondary" className={classes.button}>
-            View
+          <Button color="info" className={classes.button}>
+            <b>View</b>
           </Button>
         </Paper>
         <Dialog
@@ -73,12 +79,14 @@ class DayCard extends React.Component {
           open={this.state.editOpen}
           onClose={this.handleClose}>
           {moment(date).format('MMMM Do, Y')}
-          <IconButton
-            aria-label="Delete"
-            className={classes.margin}
+          <Fab
+            variant="contained"
+            color="secondary"
+            aria-label="Close"
+            className={classes.closeButton}
             onClick={this.handleClose}>
-            <DeleteIcon fontSize="large" />
-          </IconButton>
+            <CloseIcon fontSize="medium" />
+          </Fab>
         </Dialog>
       </Grid>
     );
