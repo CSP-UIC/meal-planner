@@ -51,12 +51,38 @@ class DayCard extends React.Component {
     });
   };
 
+  getColor = day => {
+    switch (day) {
+      case 0:
+        return 'white';
+      case 1:
+        return 'yellow';
+      case 2:
+        return 'white';
+      case 3:
+        return 'yellow';
+      case 4:
+        return 'white';
+      case 5:
+        return 'yellow';
+      case 6:
+        return 'black';
+      case 7:
+        return 'black';
+      default:
+        return 'white';
+      // code block
+    }
+  };
+
   render() {
     const { date, info, classes } = this.props;
 
     return (
       <Grid item lg={3} xs={12} md={3} sm={6}>
-        <Paper className={classes.paper}>
+        <Paper
+          className={classes.paper}
+          style={{ backgroundColor: this.getColor(moment(date).day()) }}>
           <Typography variant="h6">{moment(date).format('dddd')}</Typography>
           <Typography variant="subtitle5">
             {moment(date).format('MMMM Do, Y')}
