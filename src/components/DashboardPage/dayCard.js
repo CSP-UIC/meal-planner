@@ -54,21 +54,19 @@ class DayCard extends React.Component {
   getColor = day => {
     switch (day) {
       case 0:
-        return 'white';
+        return '#F33F32';
       case 1:
-        return 'yellow';
+        return '#21D884';
       case 2:
-        return 'white';
+        return '#5BB3E1';
       case 3:
-        return 'yellow';
+        return '#F28635';
       case 4:
-        return 'white';
+        return '#F1867C';
       case 5:
-        return 'yellow';
+        return '#4B4998';
       case 6:
-        return 'black';
-      case 7:
-        return 'black';
+        return '#2B60E8';
       default:
         return 'white';
       // code block
@@ -105,6 +103,8 @@ class DayCard extends React.Component {
           open={this.state.editOpen}
           onClose={this.handleClose}>
           {moment(date).format('MMMM Do, Y')}
+          <br />
+          {JSON.stringify(info)}
           <Fab
             variant="contained"
             color="secondary"

@@ -13,7 +13,7 @@ import NavigationNoAuth from './withoutAuth';
 import * as ROUTES from '../../constants/routes';
 import { withUser } from '../Session';
 
-const styles = {
+const styles = theme => ({
   root: {
     flexGrow: 1
   },
@@ -24,8 +24,11 @@ const styles = {
   menuButton: {
     marginLeft: -12,
     marginRight: 20
+  },
+  appBar: {
+    marginBottom: theme.spacing.unit * 4
   }
-};
+});
 
 class Navigation extends React.Component {
   render() {
